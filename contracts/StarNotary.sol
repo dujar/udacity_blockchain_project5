@@ -38,7 +38,11 @@ contract StarNotary is ERC721 {
 
         tokenIdToStarInfo[_tokenId] = newStar;
 
-        _mint(msg.sender, _tokenId);
+        mint(msg.sender, _tokenId);
+    }
+    
+    function mint(uint256 tokenId) public {
+        super._mint(msg.sender, tokenId);
     }
 
     function putStarUpForSale(uint256 _tokenId, uint256 _price) public { 

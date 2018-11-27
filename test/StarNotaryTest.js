@@ -94,8 +94,20 @@ contract('StarNotary', accounts => {
 
     describe('star uniqueness', () => { 
         it('only stars unique stars can be minted', async function() { 
+            let tx;
+            beforeEach(async function() {
+                tx = await this.contract.mint(starId, {from: user1})
+            })
             // first we mint our first star
+            it('mints starId to the right owner', async function () {
+                let owner = await this.contract.ownerOf(starId, {from: user1})
+                assert.equal(owner, user1)
+            })
             // then we try to mint the same star, and we expect an error
+            // let owner2 = await this.contract.createStar(name, dec,mag,ra,starStory, starId, {from: user1});
+            this.contract.mint(starId, {from:user1})
+            this.contract.mint(starId,{from:user2})
+
         })
 
         it('only stars unique stars can be minted even if their ID is different', async function() { 
