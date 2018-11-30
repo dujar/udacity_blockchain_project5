@@ -25,11 +25,19 @@ contract('StarNotary', accounts => {
     })
 
     describe('can create a star', () => { 
+        it('checks if star exists before creating star', async ()=>{
+            expect.equal(await this.contract.checkIfStarExist(dec,mag,ra),false)
+        })
+        it('checks if star exists after star creation', async ()=>{
+            await this.contract.createStar(name, starStory,dec,mag,ra,starId, {from: user1});
+            expect.equal(await this.contract.checkIfStarExist(dec,mag,ra),true)
+        })
         it('can create a star and get its name', async function () { 
              // Add your logic here
              await this.contract.createStar(name, starStory,dec,mag,ra,starId, {from: user1});
-             assert.deepEqual(await this.contract.tokenIdToStarInfo(tokenId),[name,starStory,dec,mag,ra])
+             assert.deepEqual(await this.contract.tokenIdToStarInfo(starId),[name,starStory,dec,mag,ra])
         })
+       
     })
 
     describe('star uniqueness', () => { 
@@ -49,10 +57,7 @@ contract('StarNotary', accounts => {
                 //problem somewhere, need to check
                 expectThrow(tx.mint(starId,{from:user2}))
             })
-            it('checks if star exists', async ()=>{
-
-                expect.equal(await this.contract.checkIfStarExist(starId),true)
-            })
+           
         // })
 
         it('only stars unique stars can be minted even if their ID is different', async function() { 
