@@ -7,22 +7,24 @@ contract StarNotary is ERC721 {
     struct Star {
         string name;
         string story;
-        StarCoordinates coordinates;
-        
-    }
-
-    struct StarCoordinates {
         string dec;
         string mag;
         string cent;
+        // StarCoordinates coordinates;
+        
     }
 
-    mapping(bytes32 => bool)  public isStarCoordinates;
+    // struct StarCoordinates {
+    //     string dec;
+    //     string mag;
+    //     string cent;
+    // }
 
+    mapping(bytes32 => bool)  public isStarCoordinates;
     mapping(uint256 => Star) public tokenIdToStarInfo;
     mapping(uint256 => uint256) public starsForSale;
 
-    function createStar(string _name, string _dec, string _mag, string _cent, string _story, uint256 _tokenId) public { 
+    function createStar(string _name, string _story, string _dec, string _mag, string _cent, uint256 _tokenId) public { 
         
         require(!checkStarCoordinates(_dec, _mag, _cent), "apparently the coordinates already exists");
         
@@ -32,10 +34,7 @@ contract StarNotary is ERC721 {
 
         require(_tokenId != 0, " no tokenId");
 
-        StarCoordinates memory coord = StarCoordinates(_dec, _mag, _cent);
-
-        Star memory newStar = Star(_name, _story, coord);
-
+        Star memory newStar = Star(_name, _story, _dec, _mag, _cent);
 
         tokenIdToStarInfo[_tokenId] = newStar;
 
@@ -47,12 +46,11 @@ contract StarNotary is ERC721 {
     }
 
     function putStarUpForSale(uint256 _tokenId, uint256 _price) public { 
-
+        
         require(this.ownerOf(_tokenId) == msg.sender);
 
         starsForSale[_tokenId] = _price;
     }
-
 
     function buyStar(uint256 _tokenId) public payable { 
 

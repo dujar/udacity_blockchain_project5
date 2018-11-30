@@ -20,18 +20,15 @@ contract('StarNotary', accounts => {
     describe('can create a star', () => { 
         it('can create a star and get its name', async function () { 
              // Add your logic here
-             await this.contract.createStar(name, dec,mag,ra,starStory, starId, {from: user1});
+             await this.contract.createStar(name, starStory,dec,mag,ra,starId, {from: user1});
+             assert.deepEqual(await this.contract.tokenIdToStarInfo(tokenId),[name,starStory,dec,mag,ra])
         })
-         // test tokenIdToStarInfo() method
-         it('can create a star and get its data', async function() { 
-            assert.deepEqual(await this.contract.tokenIdToStarInfo(tokenId), [name, story, ra, dec, mag]);
-        });
     })
 
     describe('star uniqueness', () => { 
-        let tx;
+        
         beforeEach(async function() {
-            tx = await this.contract.mint(starId, {from: user1})
+            await this.contract.mint(starId, {from: user1})
         })
                         // it('only stars unique stars can be minted', async function() { 
             // first we mint our first star
@@ -43,7 +40,7 @@ contract('StarNotary', accounts => {
             it('cannot mint starId with different owner', async()=>{
                 //need to check the require function
                 //problem somewhere, need to check
-                expectThrow(this.contract.mint(starId,{from:user2}))
+                expectThrow(tx.mint(starId,{from:user2}))
             })
         // })
 
@@ -74,10 +71,14 @@ contract('StarNotary', accounts => {
 
         beforeEach(async function () { 
             await this.contract.createStar(name, starStory, ra, dec, mag, starId, {from: user1})
+
         })
 
         it('user1 can put up their star for sale', async function () { 
             // Add your logic here
+            let price = 3
+            await this.contract.putStarUpForSale(starId,price,{from: user1})
+            assert.equal(await this.contract.starsForSale(starId),price)
         })
 
         describe('user2 can buy a star that was put up for sale', () => { 
