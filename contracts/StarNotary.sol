@@ -1,13 +1,14 @@
 pragma solidity ^0.4.23;
 
-import 'openzeppelin-solidity/contracts/token/ERC721/ERC721.sol';
+import './ERC721Token.sol';
 
-contract StarNotary is ERC721 { 
+contract StarNotary is ERC721Token { 
 
     struct Star {
         string name;
-        StarCoordinates coordinates;
         string story;
+        StarCoordinates coordinates;
+        
     }
 
     struct StarCoordinates {
@@ -33,7 +34,7 @@ contract StarNotary is ERC721 {
 
         StarCoordinates memory coord = StarCoordinates(_dec, _mag, _cent);
 
-        Star memory newStar = Star(_name, coord, _story);
+        Star memory newStar = Star(_name, _story, coord);
 
 
         tokenIdToStarInfo[_tokenId] = newStar;
@@ -41,8 +42,8 @@ contract StarNotary is ERC721 {
         _mint(msg.sender, _tokenId);
     }
     
-    function mint(uint256 tokenId) public {
-        super._mint(msg.sender, tokenId);
+    function mint(uint256 _tokenId) public {
+        super._mint(msg.sender, _tokenId);
     }
 
     function putStarUpForSale(uint256 _tokenId, uint256 _price) public { 
@@ -51,6 +52,7 @@ contract StarNotary is ERC721 {
 
         starsForSale[_tokenId] = _price;
     }
+
 
     function buyStar(uint256 _tokenId) public payable { 
 

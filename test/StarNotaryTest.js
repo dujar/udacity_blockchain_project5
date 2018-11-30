@@ -21,12 +21,11 @@ contract('StarNotary', accounts => {
         it('can create a star and get its name', async function () { 
              // Add your logic here
              await this.contract.createStar(name, dec,mag,ra,starStory, starId, {from: user1});
-
-            // test tokenIdToStarInfo() method
-            it('can create a star and get its data', async function() { 
-                assert.deepEqual(await this.contract.tokenIdToStarInfo(tokenId), [name, story, ra, dec, mag]);
-            });
         })
+         // test tokenIdToStarInfo() method
+         it('can create a star and get its data', async function() { 
+            assert.deepEqual(await this.contract.tokenIdToStarInfo(tokenId), [name, story, ra, dec, mag]);
+        });
     })
 
     describe('star uniqueness', () => { 
@@ -42,14 +41,10 @@ contract('StarNotary', accounts => {
             })
             // then we try to mint the same star, and we expect an error
             it('cannot mint starId with different owner', async()=>{
-                //need to check the reuire function
-                let owner = this.contract.mint(starId,{from:user2})
-
-                assert.equal(owner, user1)
-
+                //need to check the require function
+                //problem somewhere, need to check
+                expectThrow(this.contract.mint(starId,{from:user2}))
             })
-          
-
         // })
 
         it('only stars unique stars can be minted even if their ID is different', async function() { 
