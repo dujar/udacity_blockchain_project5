@@ -1,6 +1,6 @@
 pragma solidity ^0.4.23;
 
-import 'openzeppelin-solidity/contracts/token/ERC721/ERC721.sol';
+import "openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
 
 contract StarNotary is ERC721 { 
 
@@ -26,7 +26,7 @@ contract StarNotary is ERC721 {
 
     function createStar(string _name, string _story, string _dec, string _mag, string _cent, uint256 _tokenId) public { 
         
-        require(!checkStarCoordinates(_dec, _mag, _cent), "apparently the coordinates already exists");
+        require(!checkIfStarExist(_dec, _mag, _cent), "apparently the coordinates already exists");
         
         require(bytes(_name).length != 0, "no name");
 
@@ -69,25 +69,12 @@ contract StarNotary is ERC721 {
             msg.sender.transfer(msg.value - starCost);
         }
     }
-
-    function checkStarCoordinates(string _dec, string _mag, string _cent) internal returns(bool) {
-
-        require(bytes(_mag).length != 0);
-
-        require(bytes(_dec).length != 0);
-
-        require(bytes(_cent).length != 0);
-
-        bytes32 hash = generateHash(_dec, _mag, _cent);
-
-        if (isStarCoordinates[hash] == true) {return true;}
-        
-        isStarCoordinates[hash] = true;
-
-        return false;
-    }
     
+    function checkIfStarExist(string _dec, string _mag, string _cent) public view returns(bool) {
+        return isStarCoordinates[generateHash(_dec, _mag, _cent)];
+    }
+
     function generateHash(string _dec, string _mag, string _cent) internal pure returns(bytes32) {
-        return keccak256(abi.encodePacked(_mag, _dec, _cent));
+        return keccak256(abi.encodePacked(_dec, _mag, _cent));
     }
 }

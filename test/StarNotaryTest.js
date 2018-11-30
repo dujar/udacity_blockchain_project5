@@ -1,5 +1,11 @@
 const StarNotary = artifacts.require('StarNotary')
 
+
+// createStar(), putStarUpForSale(), buyStar(), 
+// checkIfStarExist(), mint(), 
+//  approve(), safeTransferFrom(),
+//    SetApprovalForAll(), getApproved(),
+//     isApprovedForAll(), ownerOf(), starsForSale(), tokenIdToStarInfo()
 contract('StarNotary', accounts => { 
 
     let user1 = accounts[1]
@@ -12,6 +18,7 @@ contract('StarNotary', accounts => {
     let dec = "1"
     let mag = "1"
     let starId = 1
+    let starPrice = web3.toWei(.01, "ether")
 
     beforeEach(async function() { 
         this.contract = await StarNotary.new({from: accounts[0]})
@@ -41,6 +48,10 @@ contract('StarNotary', accounts => {
                 //need to check the require function
                 //problem somewhere, need to check
                 expectThrow(tx.mint(starId,{from:user2}))
+            })
+            it('checks if star exists', async ()=>{
+
+                expect.equal(await this.contract.checkIfStarExist(starId),true)
             })
         // })
 
@@ -76,9 +87,9 @@ contract('StarNotary', accounts => {
 
         it('user1 can put up their star for sale', async function () { 
             // Add your logic here
-            let price = 3
-            await this.contract.putStarUpForSale(starId,price,{from: user1})
-            assert.equal(await this.contract.starsForSale(starId),price)
+
+            await this.contract.putStarUpForSale(starId,starPrice,{from: user1})
+            assert.equal(await this.contract.starsForSale(starId),starPrice)
         })
 
         describe('user2 can buy a star that was put up for sale', () => { 
@@ -88,10 +99,17 @@ contract('StarNotary', accounts => {
 
             it('user2 is the owner of the star after they buy it', async function() { 
                 // Add your logic here
+            
+                await this.contract.buyStar(starId,{accounts: user2})
+                assert.equal(await this.contract.ownerOf(starId),user2)
+
             })
 
             it('user2 ether balance changed correctly', async function () { 
                 // Add your logic here
+
+                assert.equal(await this.contract.ownerOf(starId),user2)
+
             })
         })
     })
