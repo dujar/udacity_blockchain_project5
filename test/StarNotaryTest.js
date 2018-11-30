@@ -1,66 +1,3 @@
-// const StarNotary = artifacts.require('StarNotary')
-
-// contract('StarNotary', accounts => { 
-
-//     beforeEach(async function() { 
-//         this.contract = await StarNotary.new({from: accounts[0]})
-//     })
-    
-//     describe('can create a star', () => { 
-//         it('can create a star and get its name', async function () { 
-//             let name = 'my story';
-//             let dec = 'dec1'
-//             let mag =  'mag1'
-//             let cent = 'cent1'
-//             let story = 'story of the day'
-//             let starToken = 1  
-//             await this.contract.createStar(name,dec,mag,cent,story, starToken, {from: accounts[0]})
-
-//             assert.equal(await this.contract.tokenIdToStarInfo(1), 'awesome star!')
-//         })
-//     })
-
-//     describe('buying and selling stars', () => { 
-//         let user1 = accounts[1]
-//         let user2 = accounts[2]
-//         let randomMaliciousUser = accounts[3]
-        
-//         let starId = 1
-//         let starPrice = web3.toWei(.01, "ether")
-
-//         beforeEach(async function () { 
-//             await this.contract.createStar('awesome star!', starId, {from: user1})    
-//         })
-
-//         it('user1 can put up their star for sale', async function () { 
-//             assert.equal(await this.contract.ownerOf(starId), user1)
-//             await this.contract.putStarUpForSale(starId, starPrice, {from: user1})
-            
-//             assert.equal(await this.contract.starsForSale(starId), starPrice)
-//         })
-
-//         describe('user2 can buy a star that was put up for sale', () => { 
-//             beforeEach(async function () { 
-//                 await this.contract.putStarUpForSale(starId, starPrice, {from: user1})
-//             })
-
-//             it('user2 is the owner of the star after they buy it', async function() { 
-//                 await this.contract.buyStar(starId, {from: user2, value: starPrice, gasPrice: 0})
-//                 assert.equal(await this.contract.ownerOf(starId), user2)
-//             })
-
-//             it('user2 ether balance changed correctly', async function () { 
-//                 let overpaidAmount = web3.toWei(.05, 'ether')
-//                 const balanceBeforeTransaction = web3.eth.getBalance(user2)
-//                 await this.contract.buyStar(starId, {from: user2, value: overpaidAmount, gasPrice: 0})
-//                 const balanceAfterTransaction = web3.eth.getBalance(user2)
-
-//                 assert.equal(balanceBeforeTransaction.sub(balanceAfterTransaction), starPrice)
-//             })
-//         })
-//     })
-// })
-
 const StarNotary = artifacts.require('StarNotary')
 
 contract('StarNotary', accounts => { 
@@ -93,25 +30,31 @@ contract('StarNotary', accounts => {
     })
 
     describe('star uniqueness', () => { 
-        it('only stars unique stars can be minted', async function() { 
-            let tx;
-            beforeEach(async function() {
-                tx = await this.contract.mint(starId, {from: user1})
-            })
+        let tx;
+        beforeEach(async function() {
+            tx = await this.contract.mint(starId, {from: user1})
+        })
+                        // it('only stars unique stars can be minted', async function() { 
             // first we mint our first star
             it('mints starId to the right owner', async function () {
                 let owner = await this.contract.ownerOf(starId, {from: user1})
                 assert.equal(owner, user1)
             })
             // then we try to mint the same star, and we expect an error
-            // let owner2 = await this.contract.createStar(name, dec,mag,ra,starStory, starId, {from: user1});
-            this.contract.mint(starId, {from:user1})
-            this.contract.mint(starId,{from:user2})
+            it('cannot mint starId with different owner', async()=>{
+                //need to check the reuire function
+                let owner = this.contract.mint(starId,{from:user2})
 
-        })
+                assert.equal(owner, user1)
+
+            })
+          
+
+        // })
 
         it('only stars unique stars can be minted even if their ID is different', async function() { 
             // first we mint our first star
+
             // then we try to mint the same star, and we expect an error
         })
 
