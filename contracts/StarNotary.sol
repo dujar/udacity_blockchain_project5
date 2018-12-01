@@ -10,15 +10,8 @@ contract StarNotary is ERC721 {
         string dec;
         string mag;
         string cent;
-        // StarCoordinates coordinates;
         
     }
-
-    // struct StarCoordinates {
-    //     string dec;
-    //     string mag;
-    //     string cent;
-    // }
 
     mapping(bytes32 => bool)  public isStarCoordinates;
     mapping(uint256 => Star) public tokenIdToStarInfo;
@@ -38,7 +31,7 @@ contract StarNotary is ERC721 {
 
         tokenIdToStarInfo[_tokenId] = newStar;
 
-        _mint(msg.sender, _tokenId);
+        super._mint(msg.sender, _tokenId);
     }
     
     function mint(uint256 _tokenId) public {

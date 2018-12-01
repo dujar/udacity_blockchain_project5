@@ -19,20 +19,13 @@ contract('StarNotary', accounts => {
     let mag = "1"
     let starId = 1
     let starPrice = web3.toWei(.01, "ether")
-
     beforeEach(async function() { 
         this.contract = await StarNotary.new({from: accounts[0]})
+
     })
 
     describe('can create a star', () => { 
-        it('checks if star exists before creating star', async ()=>{
-            expect.equal(await this.contract.checkIfStarExist(dec,mag,ra),false)
-        })
-        it('checks if star exists after star creation', async ()=>{
-            await this.contract.createStar(name, starStory,dec,mag,ra,starId, {from: user1});
-            expect.equal(await this.contract.checkIfStarExist(dec,mag,ra),true)
-        })
-        it('can create a star and get its name', async function () { 
+        it('can create a star and get its star data', async function () { 
              // Add your logic here
              await this.contract.createStar(name, starStory,dec,mag,ra,starId, {from: user1});
              assert.deepEqual(await this.contract.tokenIdToStarInfo(starId),[name,starStory,dec,mag,ra])
@@ -42,77 +35,77 @@ contract('StarNotary', accounts => {
 
     describe('star uniqueness', () => { 
         
-        beforeEach(async function() {
+        
+        beforeEach(async ()=> {
             await this.contract.mint(starId, {from: user1})
         })
-                        // it('only stars unique stars can be minted', async function() { 
+            // it('only stars unique stars can be minted', async function() { 
             // first we mint our first star
-            it('mints starId to the right owner', async function () {
+            it('mints starId to the right owner', async ()=> {
                 let owner = await this.contract.ownerOf(starId, {from: user1})
                 assert.equal(owner, user1)
             })
             // then we try to mint the same star, and we expect an error
-            it('cannot mint starId with different owner', async()=>{
+            it('cannot mint starId with different owner', async() =>{
                 //need to check the require function
                 //problem somewhere, need to check
-                expectThrow(tx.mint(starId,{from:user2}))
+                expectThrow(await this.contract.mint(starId,{from: user2}))
             })
-           
+        
         // })
 
-        it('only stars unique stars can be minted even if their ID is different', async function() { 
+        it('only stars unique stars can be minted even if their ID is different', async ()=> { 
             // first we mint our first star
 
             // then we try to mint the same star, and we expect an error
         })
 
-        it('minting unique stars does not fail', async function() { 
-            for(let i = 0; i < 10; i ++) { 
+        it('minting unique stars does not fail', async ()=> { 
+            for(let i = 1; i < 10; i ++) { 
                 let id = i
                 let newRa = i.toString()
                 let newDec = i.toString()
                 let newMag = i.toString()
 
-                await this.contract.createStar(name, starStory, newRa, newDec, newMag, id, {from: user1})
+                await this.contract.createStar(name, starStory, newDec, newMag,newRa,  id, {from: user1})
 
-                let starInfo = await this.contract.starIdToStarInfo(id)
-                assert.equal(starInfo[0], name)
+                let starInfo = await tx.tokenIdToStarInfo(id)
+                console.log("info from star",starInfo)
+                assert.deepEqual(starInfo, [name,starStory,newDec,newMag,newRa])
             }
         })
     })
 
-    describe('buying and selling stars', () => { 
+    describe('buying and selling stars', async() => { 
 
         let starPrice = web3.toWei(.01, "ether")
 
-        beforeEach(async function () { 
+        beforeEach(async () => { 
             await this.contract.createStar(name, starStory, ra, dec, mag, starId, {from: user1})
 
         })
 
-        it('user1 can put up their star for sale', async function () { 
+        it('user1 can put up their star for sale', async () => { 
             // Add your logic here
 
             await this.contract.putStarUpForSale(starId,starPrice,{from: user1})
             assert.equal(await this.contract.starsForSale(starId),starPrice)
         })
 
-        describe('user2 can buy a star that was put up for sale', () => { 
-            beforeEach(async function () { 
+        describe('user2 can buy a star that was put up for sale', async () => { 
+            beforeEach(async ()=> { 
                 await this.contract.putStarUpForSale(starId, starPrice, {from: user1})
             })
 
-            it('user2 is the owner of the star after they buy it', async function() { 
+            it('user2 is the owner of the star after they buy it', async () => { 
                 // Add your logic here
             
-                await this.contract.buyStar(starId,{accounts: user2})
+                await tx.buyStar(starId,{accounts: user2})
                 assert.equal(await this.contract.ownerOf(starId),user2)
-
             })
 
-            it('user2 ether balance changed correctly', async function () { 
+            it('user2 ether balance changed correctly', async  ()=> { 
                 // Add your logic here
-
                 assert.equal(await this.contract.ownerOf(starId),user2)
 
             })
@@ -120,7 +113,7 @@ contract('StarNotary', accounts => {
     })
 })
 
-var expectThrow = async function(promise) { 
+var expectThrow = async (promise)=> { 
     try { 
         await promise
     } catch (error) { 
