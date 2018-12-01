@@ -100,8 +100,7 @@ contract('StarNotary', accounts => {
 
             it('user2 is the owner of the star after they buy it', async function(){ 
                 // Add your logic here
-            
-                await tx.buyStar(starId,{accounts: user2})
+                await this.contract.buyStar(starId,{from: user2,value: starPrice})
                 assert.equal(await this.contract.ownerOf(starId),user2)
             })
 

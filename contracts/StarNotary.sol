@@ -2,6 +2,19 @@ pragma solidity ^0.4.23;
 
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
 
+//  createStar(), Yes
+//  putStarUpForSale(), Yes
+//  buyStar(), Yes
+//  checkIfStarExist(),Yes
+//  mint(), Yes
+//  approve(), Yes, Zeppelin 
+//  safeTransferFrom(), Yes, Zeppelin
+//  SetApprovalForAll(),Yes, Zeppelin 
+//  getApproved(), Yes from Zeppelin
+//  isApprovedForAll(),Yes from Zeppelin 
+//  ownerOf(), Yes from Zeppelin
+//  starsForSale(), not Yet
+//  tokenIdToStarInfo(), Yes
 contract StarNotary is ERC721 { 
 
     struct Star {
