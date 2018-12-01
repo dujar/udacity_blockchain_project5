@@ -1,7 +1,7 @@
 let HDWalletProvider = require("truffle-hdwallet-provider");
 let mnemonic = "gate tongue speed ghost melt regret adapt solution lottery boss boil hockey"
 let accountForTestNetFaucer = "0x9fb2d9e0ae327439785a58f184929805c9643adc"
-let notary = "0x4cd2216ca7150d4ada745e1966685027e946e1d2"
+let notary = "0x58f1d5121e5ce2120de259fdc579808fbdea5ae2"
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!
