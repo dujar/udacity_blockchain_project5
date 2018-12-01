@@ -106,9 +106,17 @@ contract('StarNotary', accounts => {
 
             it('user2 ether balance changed correctly', async  function(){ 
                 // Add your logic here
-                assert.equal(await this.contract.ownerOf(starId),user2)
+                let overpaidAmount = web3.toWei(.05, 'ether')
+
+                const balanceOfUser2BeforeTransaction = web3.eth.getBalance(user2)
+                await this.contract.buyStar(starId, {from: user2, value: overpaidAmount, gasPrice:0})
+                const balanceAfterUser2BuysStar = web3.eth.getBalance(user2)
+
+                assert.equal(balanceOfUser2BeforeTransaction.sub(balanceAfterUser2BuysStar), starPrice)
+         
 
             })
+            
         })
     })
 })
