@@ -1,6 +1,7 @@
 let HDWalletProvider = require("truffle-hdwallet-provider");
 let mnemonic = "gate tongue speed ghost melt regret adapt solution lottery boss boil hockey"
 let accountForTestNetFaucer = "0x9fb2d9e0ae327439785a58f184929805c9643adc"
+let notary = "0x4cd2216ca7150d4ada745e1966685027e946e1d2"
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!
@@ -14,10 +15,10 @@ module.exports = {
       provider: function(){
         return new HDWalletProvider(mnemonic,'https://rinkeby.infura.io/v3/38c30c6c70884366b9fb7f3747e72666')
       },
-      host: "localhost", //local node
+      // host: "localhost", //local node
       // port: 8545, // connection port
       network_id: 4, // network id for test networks
-      gas: 4700000, // gas limit
+      gas: 5700000,//4700000, // gas limit
       gasPrice: 10000000000,
     }
   }
