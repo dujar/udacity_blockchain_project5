@@ -635,7 +635,7 @@
                     //get the values from the inputs in variables
                     let tokenInput= document.getElementById("tokenSale").value
                     let price = document.getElementById("price").value
-                    starNotary.putStarUpForSale.call(Number(tokenInput),Number(price), {from: user}, 
+                    starNotary.putStarUpForSale.sendTransaction(Number(tokenInput),Number(price), {from: user}, 
                         function (error, result){ 
                             if (!error){
                                 console.log("result",result)
