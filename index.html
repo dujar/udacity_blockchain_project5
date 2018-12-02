@@ -59,7 +59,10 @@
         <div class="container">
           <h1>Star Notary</h1>
             <div class="row">
-               
+                <label class="bold">star tokenId for sale:</label><br><input type="text" id="tokenSale"><br><hr>
+                <label class="bold">price of Star:</label><br><input type="text" id="price"><br><hr>
+                <button id='red' onclick="starForSale()">Put my star up for sale</button>
+
                 <label class="bold">Star Name:</label><br><input type="text" id="name"><br><hr>
                 <label class="bold">Star Story:</label><br><textarea type="text" id="story" rows="4"></textarea><br><hr>
                 <label class="bold">Dec:</label><br><input type="text" id="dec"><br><hr>
@@ -548,7 +551,6 @@
   ]
             ).at('0x58f1D5121E5CE2120De259Fdc579808FbDea5ae2')
             // Grab the contract at specified deployed address with the interface defined by the ABI
-            var id= Math.round(Math.random()*20)
             function claimButtonClicked() { 
               console.log("clicked")
                 web3.eth.getAccounts(function(error, accounts) { 
@@ -573,6 +575,7 @@
                     // sendTransaction from web3 api
                     
                     
+                    
                     starNotary.createStar.sendTransaction(name, story,dec, mag, cent,Number(tokenInput), {from: user}, 
                         function (error, result){ 
                             if (!error){
@@ -595,6 +598,7 @@
                 })
             }
             function getStarInfo(){
+
                 web3.eth.getAccounts(function(error, accounts){
                     if (error) {
                         console.log("error with accounts",error)
@@ -612,6 +616,34 @@
                             console.log("error with tokenIdToStarInfo",error)
                         }
                     })
+                })
+            }
+
+
+             function starForSale() { 
+              console.log("clicked")
+                web3.eth.getAccounts(function(error, accounts) { 
+                    console.log("accounts",accounts)
+                    if (error) { 
+                        console.log("error getting accounts",error)
+                        return
+                    }
+                    //the ganachache account that i have 3 ethers initially from faucet,
+                    // however i beleive it would work from other accounts!
+                    let user = accounts[0]
+                    console.log("user",user)
+                    //get the values from the inputs in variables
+                    let tokenInput= document.getElementById("tokenSale").value
+                    let price = document.getElementById("price").value
+                    starNotary.putStarUpForSale.call(Number(tokenInput),Number(price), {from: user}, 
+                        function (error, result){ 
+                            if (!error){
+                                console.log("result",result)
+                                document.getElementById("result").value = `price of star is now ${price}`
+                            } else{
+                                console.log("error creating star",error)
+                            }
+                        })
                 })
             }
 
