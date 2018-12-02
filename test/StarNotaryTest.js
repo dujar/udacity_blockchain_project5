@@ -72,7 +72,7 @@ describe(' ERCTOKEN 721 test',()=>{
 
         it('emits the correct event', async function () { 
             // Add your logic here
-            console.log("tx.logs[0]",tx.logs[0].args)
+            // console.log("tx.logs[0]",tx.logs[0].args)
             assert.equal(tx.logs[0].event, 'Transfer')
             assert.equal(tx.logs[0].args.tokenId, tokenId)
             assert.equal(tx.logs[0].args.to, user2)
