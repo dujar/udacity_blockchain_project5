@@ -32,8 +32,8 @@
             }
             // Legacy dapp browsers...
             else if (window.web3) {
-              console.log("window web3")
-                window.web3 = new Web3(web3.currentProvider);
+              console.log("window web3 provider");
+                window.web3 = new Web3(web3.currentProvider)
                 // Acccounts always exposed
                 // web3.eth.sendTransaction({/* ... */ });
             }
@@ -45,10 +45,12 @@
         });
 
         if (typeof web3 != 'undefined') {
+          console.log("current provider, from metamask")
             web3 = new Web3(web3.currentProvider) // what Metamask injected 
         } else {
             // Instantiate and set Ganache as your provider
             //web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+            console.log("rinkeby network")
             web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/v3/38c30c6c70884366b9fb7f3747e72666"));
         }
 
@@ -571,7 +573,7 @@
                     starNotary.createStar.sendTransaction(name, story,dec, mag, cent,id, {from: user}, 
                         function (error, result){ 
                             if (!error){
-                                console("result",result)
+                                console.log("result",result)
                                 document.getElementById("result").value = "tx:" + result + ", transaction pending"
               
                                 let star = starNotary.Transfer()
