@@ -72,10 +72,11 @@ describe(' ERCTOKEN 721 test',()=>{
 
         it('emits the correct event', async function () { 
             // Add your logic here
+            console.log("tx.logs[0]",tx.logs[0].args)
             assert.equal(tx.logs[0].event, 'Transfer')
-            assert.equal(tx.logs[0].args._tokenId, tokenId)
-            assert.equal(tx.logs[0].args._to, user2)
-            assert.equal(tx.logs[0].args._from, user1)
+            assert.equal(tx.logs[0].args.tokenId, tokenId)
+            assert.equal(tx.logs[0].args.to, user2)
+            assert.equal(tx.logs[0].args.from, user1)
         })
 
         it('only permissioned users can transfer tokens', async function() { 
