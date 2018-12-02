@@ -17,3 +17,8 @@ https://review.udacity.com/#!/rubrics/2297/view
 |tokenid:| 123|
 |||
 
+## helpeful sources:
+
+- https://rinkeby.etherscan.io/address/0xfb0720c0715e68f80c0c0437c9c491abfed9e7ab#code
+- https://knowledge.udacity.com/?page=1&query=rinkeby&sort=RELEVANCE
+- https://knowledge.udacity.com/?page=1&query=web3&sort=RELEVANCE
