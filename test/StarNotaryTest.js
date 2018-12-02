@@ -6,6 +6,8 @@ const StarNotary = artifacts.require('StarNotary')
 //  approve(), safeTransferFrom(),
 //    SetApprovalForAll(), getApproved(),
 //     isApprovedForAll(), ownerOf(), starsForSale(), tokenIdToStarInfo()
+
+
 contract('StarNotary', accounts => { 
 
     let user1 = accounts[1]
@@ -18,11 +20,120 @@ contract('StarNotary', accounts => {
     let dec = "1"
     let mag = "1"
     let starId = 1
+    var operator = accounts[4]
+
     beforeEach(async function() { 
         this.contract = await StarNotary.new({from: accounts[0]})
     })
 
-    
+    //#since I am using zeppelin i will make the following tests here
+describe(' ERCTOKEN 721 test',()=>{
+    describe('can create a token', () => { 
+        let tokenId = 1
+        let tx
+
+        beforeEach(async function () { 
+            tx = await this.contract.mint(tokenId, {from: user1})
+        })
+
+        it('ownerOf tokenId is user1', async function () { 
+            //Add your logic here
+            let owner = await this.contract.ownerOf(tokenId)
+            assert.equal(owner,user1)
+        })
+
+        it('balanceOf user1 is incremented by 1', async function () { 
+           // Add your logic here
+           let balance = await this.contract.balanceOf(user1)
+
+            assert.equal(balance.toNumber(), 1)
+        })
+
+        it('emits the correct event during creation of a new token', async function () { 
+            assert.equal(tx.logs[0].event, 'Transfer')
+        })
+    })
+
+    describe('can transfer token', () => { 
+        let tokenId = 1
+        let tx 
+
+        beforeEach(async function () { 
+            await this.contract.mint(tokenId, {from: user1})
+
+            tx = await this.contract.transferFrom(user1, user2, tokenId, {from: user1})
+        })
+
+        it('token has new owner', async function () { 
+            // Add your logic here
+            assert.equal(await this.contract.ownerOf(tokenId), user2)
+
+        })
+
+        it('emits the correct event', async function () { 
+            // Add your logic here
+            assert.equal(tx.logs[0].event, 'Transfer')
+            assert.equal(tx.logs[0].args._tokenId, tokenId)
+            assert.equal(tx.logs[0].args._to, user2)
+            assert.equal(tx.logs[0].args._from, user1)
+        })
+
+        it('only permissioned users can transfer tokens', async function() { 
+            // Add your logic here
+            let randomPersonTryingToStealTokens = accounts[4]
+
+            await expectThrow(this.contract.transferFrom(user1, randomPersonTryingToStealTokens, tokenId, {from: randomPersonTryingToStealTokens}))
+      
+        })
+    })
+
+    describe('can grant approval to transfer', () => { 
+        let tokenId = 1
+        let tx 
+
+        beforeEach(async function () { 
+            await this.contract.mint(tokenId, {from: user1})
+            tx = await this.contract.approve(user2, tokenId, {from: user1})
+        })
+
+        it('set user2 as an approved address', async function () { 
+            //Add your logic here
+            assert.equal(await this.contract.getApproved(tokenId), user2)
+
+        })
+
+        it('user2 can now transfer', async function () { 
+            // Add your logic here
+
+            await this.contract.transferFrom(user1, user2, tokenId, {from: user2})
+
+            assert.equal(await this.contract.ownerOf(tokenId), user2)
+        })
+
+        it('emits the correct event', async function () { 
+            // Add your logic here
+            assert.equal(tx.logs[0].event, 'Approval')
+
+        })
+    })
+
+    describe('can set an operator', () => { 
+        let tokenId = 1
+        let tx 
+
+        beforeEach(async function () { 
+            await this.contract.mint(tokenId, {from: user1})
+
+            tx = await this.contract.setApprovalForAll(operator, true, {from: user1})
+        })
+
+        it('can set an operator', async function () { 
+           // Add your logic here
+           assert.equal(await this.contract.isApprovedForAll(user1, operator), true)
+
+        })
+    })
+})
 
     describe('buying and selling stars', async function(){ 
 
@@ -133,7 +244,11 @@ contract('StarNotary', accounts => {
 
      
     })
+
+
+ 
 })
+
 
 var expectThrow = async function(promise){ 
     try { 
