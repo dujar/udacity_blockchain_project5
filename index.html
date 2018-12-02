@@ -65,6 +65,7 @@
                 <label class="bold">Dec:</label><br><input type="text" id="dec"><br><hr>
                 <label class="bold">Mag:</label><br><input type="text" id="mag"><br><hr>
                 <label class="bold">Cent:</label><br><input type="text" id="cent"><br><hr>
+                <label class="bold">Token:</label><br><input type="text" id="token"><br><hr>
 
                 <!-- 1) Claim a new star. Each new star support these pieces of metadata: -->
 
@@ -566,11 +567,13 @@
                     let dec = document.getElementById("dec").value
                     let mag = document.getElementById("mag").value
                     let cent = document.getElementById("cent").value
+                    let tokenInput= document.getElementById("token").value
+                    console.log(name,story,dec,mag,cent,tokenInput)
                     //access 
                     // sendTransaction from web3 api
                     
                     
-                    starNotary.createStar.sendTransaction(name, story,dec, mag, cent,id, {from: user}, 
+                    starNotary.createStar.sendTransaction(name, story,dec, mag, cent,Number(tokenInput), {from: user}, 
                         function (error, result){ 
                             if (!error){
                                 console.log("result",result)
@@ -581,7 +584,6 @@
                                     if (!error) {
                                         console.log("transaction complete!")
                                         document.getElementById("result").value = "transaction complete!"
-                                        id++
                                     } else {
                                         console.log('star claim is showing error')
                                     }
@@ -599,11 +601,12 @@
                         return
                     }
                     let user = accounts[0]
-                    let tokenId = document.getElementById("tokenId").value
-                    
-                    starNotary.tokenIdToStarInfo.call(tokenId, function(error, result) {
+                    let tokenInput = document.getElementById("token").value
+                    console.log("starnotary",starNotary)
+                    console.log("starnotary token input",typeof tokenInput)
+                    starNotary.tokenIdToStarInfo.call(Number(tokenInput), function(error, result) {
                         if (!error) {
-                            console.log("no error getting tokenIdToStarInfo",result)
+                            console.log("no error, getting tokenIdToStarInfo",result)
                             document.getElementById("result").value = result
                         } else {
                             console.log("error with tokenIdToStarInfo",error)

@@ -195,7 +195,9 @@ describe(' ERCTOKEN 721 test',()=>{
         it('can create a star and get its star data', async function () { 
              // Add your logic here
              await this.contract.createStar(name, starStory,dec,mag,ra,starId, {from: user1});
-             assert.deepEqual(await this.contract.tokenIdToStarInfo(starId),[name,starStory,dec,mag,ra])
+             let starInfo = await this.contract.tokenIdToStarInfo(starId)
+             console.log("starInfo",starInfo)
+             assert.deepEqual(starInfo,[name,starStory,dec,mag,ra])
         })
        
     })
