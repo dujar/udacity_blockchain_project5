@@ -10,36 +10,84 @@
     </head>
 
     <body>
-        <div class="container">
-            <h1>Star Notary</h1>
+      <script>
+        console.log("window",window)
+     window.addEventListener('load', async () => {
+            // Modern dapp browsers...
+            
+            if (window.ethereum) {
+              console.log("ethereum window")
+                window.web3 = new Web3(ethereum);
+                try {
+                    // Request account access if needed
+                    console.log("enabling ethereum")
+                    await ethereum.enable();
+                    // Acccounts now exposed
+                    // web3.eth.sendTransaction({/* ... */ });
+                } catch (error) {
+                    // User denied account access...
+                }
+            }
+            // Legacy dapp browsers...
+            else if (window.web3) {
+              console.log("window web3")
+                window.web3 = new Web3(web3.currentProvider);
+                // Acccounts always exposed
+                // web3.eth.sendTransaction({/* ... */ });
+            }
+            // Non-dapp browsers...
+            else {
+                console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+            }
+            console.log("accounts",web3.eth.accounts[0]);
+        });
 
+        if (typeof web3 != 'undefined') {
+            web3 = new Web3(web3.currentProvider) // what Metamask injected 
+        } else {
+            // Instantiate and set Ganache as your provider
+            //web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+            web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/v3/38c30c6c70884366b9fb7f3747e72666"));
+        }
+
+      
+      </script>
+        <div class="container">
+          <h1>Star Notary</h1>
             <div class="row">
-                <label class="bold">Star Name:</label>
-                <label id="star-name"></label>
+               
+                <label class="bold">Star Name:</label><br><input type="text" id="name"><br><hr>
+                <label class="bold">Star Story:</label><br><textarea type="text" id="story" rows="4"></textarea><br><hr>
+                <label class="bold">Dec:</label><br><input type="text" id="dec"><br><hr>
+                <label class="bold">Mag:</label><br><input type="text" id="mag"><br><hr>
+                <label class="bold">Cent:</label><br><input type="text" id="cent"><br><hr>
+
+                <!-- 1) Claim a new star. Each new star support these pieces of metadata: -->
+
+                <button id="claim-button" onclick="claimButtonClicked()">Claim Unique Star</button>
+
+                <!-- 2) Lookup a star by ID using tokenIdToStarInfo() -->
+            <b>get by tokenId:</b><br><input type="number", id="queryById" min=0><br>
+            <button id="tokenId" onclick="getStarInfo()">Get Star Info</button>
+            <textarea id="result" rows = "4" ></textarea>
             </div>
 
-            <div class="row">
+            <!-- <div class="row">
                 <label class="bold">Star Owner:</label>
                 <label id="star-owner"></label>
-            </div>
-
-            <button id="claim-button" onclick="claimButtonClicked()">Claim Star</button>
+            </div> -->
         </div>
 
         <script>    
-         
-            if(typeof web3 != 'undefined') { 
-                web3 = new Web3(web3.currentProvider) // what Metamask injected 
-            } else {
-                // Instantiate and set Ganache as your provider
-                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-            }
+        
 
             // The default (top) wallet account from a list of test accounts 
+            console.log(web3.eth)
             web3.eth.defaultAccount = web3.eth.accounts[0];
+            console.log("default",web3.eth.defaultAccount)
 
             // The interface definition for your smart contract (the ABI) 
-            var StarNotary = web3.eth.contract(
+            var starNotary = web3.eth.contract(
                 [
     {
       "constant": true,
@@ -493,53 +541,73 @@
       "type": "function"
     }
   ]
-            );
+            ).at('0x58f1D5121E5CE2120De259Fdc579808FbDea5ae2')
             // Grab the contract at specified deployed address with the interface defined by the ABI
-            var starNotary = StarNotary.at('0x8040086095e9bc41535094bf03eae1f6178b5260');
-            
-            // Get and display star name
-            starNotary.starName(function (error, result) {
-                if (!error) {
-                    document.getElementById('star-name').innerText = result
-                } else { 
-                    console.log(error);
-                }
-            });
-
-            // Get and display star owner
-            starNotary.starOwner(function (error, result) {
-                if (!error) {
-                    document.getElementById('star-owner').innerText = result
-                } else { 
-                    console.log(error);
-                }
-            });
-
-            // Enable claim button being clicked
+            var id= Math.round(Math.random()*20)
             function claimButtonClicked() { 
+              console.log("clicked")
                 web3.eth.getAccounts(function(error, accounts) { 
+                    console.log("accounts",accounts)
                     if (error) { 
-                        console.log(error)
+                        console.log("error getting accounts",error)
                         return
                     }
-                    var account = accounts[0]
-                    starNotary.claimStar(function (error, result) {
-                        if (!error) {
-                            var starClaimedEvent = starNotary.starClaimed({from: account});
-                            starClaimedEvent.watch(function(error, result) {
-                                if (!error) {
-                                    location.reload();
-                                } else {
-                                    console.log('watching for star claimed event is failing');
-                                }
-                            });
-                        } else { 
-                            console.log(error);
-                        }
-                    });
-                   
+                    //the ganachache account that i have 3 ethers initially from faucet,
+                    // however i beleive it would work from other accounts!
+                    let user = accounts[0]
+                    console.log("user",user)
+                    //get the values from the inputs in variables
+                    let name = document.getElementById("name").value
+                    let story = document.getElementById("story").value
+                    let dec = document.getElementById("dec").value
+                    let mag = document.getElementById("mag").value
+                    let cent = document.getElementById("cent").value
+                    //access 
+                    // sendTransaction from web3 api
+                    
+                    
+                    starNotary.createStar.sendTransaction(name, story,dec, mag, cent,id, {from: user}, 
+                        function (error, result){ 
+                            if (!error){
+                                console("result",result)
+                                document.getElementById("result").value = "tx:" + result + ", transaction pending"
+              
+                                let star = starNotary.Transfer()
+                                star.watch(function(error, result) {
+                                    if (!error) {
+                                        console.log("transaction complete!")
+                                        document.getElementById("result").value = "transaction complete!"
+                                        id++
+                                    } else {
+                                        console.log('star claim is showing error')
+                                    }
+                                })
+                            } else{
+                                console.log("error creating star",error)
+                            }
+                        })
                 })
             }
+            function getStarInfo(){
+                web3.eth.getAccounts(function(error, accounts){
+                    if (error) {
+                        console.log("error with accounts",error)
+                        return
+                    }
+                    let user = accounts[0]
+                    let tokenId = document.getElementById("tokenId").value
+                    
+                    starNotary.tokenIdToStarInfo.call(tokenId, function(error, result) {
+                        if (!error) {
+                            console.log("no error getting tokenIdToStarInfo",result)
+                            document.getElementById("result").value = result
+                        } else {
+                            console.log("error with tokenIdToStarInfo",error)
+                        }
+                    })
+                })
+            }
+
         </script>
     </body>
 </html>
